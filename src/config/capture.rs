@@ -49,7 +49,7 @@ impl Default for ChromiumConfig {
         Self {
             executable: String::new(),
             user_data_dir: String::new(),
-            start_url: "https://game.maj-soul.com/1/".to_string(),
+            start_url: "https://mahjongsoul.game.yo-star.com/".to_string(),
             cft_channel: "stable".to_string(),
             force_cft: false,
             extra_args: vec![],

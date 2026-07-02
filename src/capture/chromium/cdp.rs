@@ -107,9 +107,10 @@ pub fn diff_pages(prev: &HashSet<String>, current: &HashSet<String>) -> (Vec<Str
 }
 
 /// Hosts whose WebSocket creation hands the page handle to autoplay.
-/// `maj-soul.com` covers en/cn/jp portals; `mahjongsoul.com` is the
-/// Yostar mirror.
-const AUTOPLAY_HOST_HINTS: &[&str] = &["maj-soul.com", "mahjongsoul.com"];
+/// `maj-soul.com` covers en/cn/jp portals; `mahjongsoul.com` and
+/// `yo-star.com` are the Yostar (international) mirrors -- the actual
+/// gameplay host there is `mahjongsoul.game.yo-star.com`.
+const AUTOPLAY_HOST_HINTS: &[&str] = &["maj-soul.com", "mahjongsoul.com", "yo-star.com"];
 
 fn is_autoplay_target_url(ws_url: &str) -> bool {
     AUTOPLAY_HOST_HINTS.iter().any(|h| ws_url.contains(h))
