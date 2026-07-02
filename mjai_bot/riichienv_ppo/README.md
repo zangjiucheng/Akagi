@@ -4,12 +4,12 @@ Bridges a trained RiichiEnv-PPO checkpoint into [Akagi](https://github.com/shink
 so it can play live on Tenhou / Majsoul / Riichi City / Amatsuki through Akagi's
 mjai bot protocol (`Akagi/mjai_bot/README.md`).
 
-The canonical source of truth is `riichienv-ml/scripts/akagi_bot/` in the
-[RiichiEnv-PPO](https://github.com/zangjiucheng/RiichiEnv-PPO) repo; this
-folder is a snapshot copy committed here so the bot works out of a plain
-clone of this fork. When developing against RiichiEnv-PPO as the superproject
-(this repo checked out as its `Akagi` submodule), symlink instead of copying
-so edits stay in sync:
+This folder is the source of truth. Our [Akagi fork](https://github.com/zangjiucheng/Akagi)
+carries a snapshot copy committed at `mjai_bot/riichienv_ppo/` so the bot
+works out of a plain clone or a packaged standalone build; keep the two in
+sync by hand after editing here. When developing against RiichiEnv-PPO as
+the superproject (Akagi checked out as its `Akagi` submodule), symlink
+instead of copying so edits stay live:
 
 ```sh
 rm -rf Akagi/mjai_bot/riichienv_ppo
@@ -18,6 +18,15 @@ ln -s ../../riichienv-ml/scripts/akagi_bot Akagi/mjai_bot/riichienv_ppo
 
 Then in Akagi's Bots tab: Refresh -> Install environment (runs `uv sync`
 against `pyproject.toml` here) -> activate for 4p and/or 3p.
+
+### Running from a packaged/standalone Akagi build
+
+A packaged build (see `scripts/package-zip.sh` in the Akagi repo) can't
+locate the RiichiEnv-PPO checkout by relative position the way the symlinked
+dev setup can. Set the `repo_root` setting (Akagi's Bots tab, or directly in
+this bot's `settings.toml`) to the checkout's absolute path -- everything
+else (`config_path_4p`, `model_path_4p`, ...) then resolves relative to that,
+same as in dev mode.
 
 ## Configuring which model it plays
 

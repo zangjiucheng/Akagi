@@ -36,10 +36,33 @@ def notify(level: str, title: str, body: str | None = None, *, sticky: bool = Fa
     sys.stderr.flush()
 
 
-# bot.py lives at <repo-root>/riichienv-ml/scripts/akagi_bot/bot.py (whether
-# reached directly or through a symlink under Akagi/mjai_bot/<name>/ --
-# .resolve() follows the symlink to this physical location either way).
-REPO_ROOT = Path(__file__).resolve().parents[3]
+def _early_repo_root_override() -> Path | None:
+    """Peek at AKAGI_BOT_CONFIG for a `repo_root` override before any
+    riichienv_ml import happens (see REPO_ROOT below for why this must
+    run before sys.path is touched).
+    """
+    cfg_path = os.environ.get("AKAGI_BOT_CONFIG")
+    if not cfg_path or not Path(cfg_path).is_file():
+        return None
+    try:
+        with open(cfg_path) as f:
+            data = json.load(f)
+    except Exception:
+        return None
+    root = data.get("repo_root")
+    if not root:
+        return None
+    return Path(root).expanduser().resolve()
+
+
+# bot.py normally lives at <repo-root>/riichienv-ml/scripts/akagi_bot/bot.py
+# (whether reached directly or through a symlink under Akagi/mjai_bot/<name>/
+# -- .resolve() follows the symlink to this physical location either way),
+# which is 3 directories below <repo-root>. That fixed-depth assumption
+# breaks once this file is bundled inside a packaged Akagi.app (nested under
+# Contents/MacOS/mjai_bot/<name>/ instead), so an explicit `repo_root`
+# setting takes priority when present.
+REPO_ROOT = _early_repo_root_override() or Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "riichienv-ml" / "src"))
 
 from riichienv import RiichiEnv, MeldType  # noqa: E402
@@ -47,6 +70,7 @@ from riichienv.convert import tid_to_mjai  # noqa: E402
 from riichienv_ml.config import GAME_PARAMS, import_class, load_config  # noqa: E402
 
 DEFAULT_SETTINGS = {
+    "repo_root": "",
     "config_path_4p": "riichienv-ml/src/riichienv_ml/configs/4p/ppo_v2.yml",
     "model_path_4p": "artifacts/4p/ppo_v2/checkpoints",
     "config_path_3p": "riichienv-ml/src/riichienv_ml/configs/3p/ppo.yml",

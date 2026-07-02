@@ -7,6 +7,12 @@ description = "Runs a trained RiichiEnv-PPO checkpoint (PPO/BC/CQL ActorCritic) 
 version     = "0.1.0"
 supported_modes = ["4p", "3p"]
 
+[settings.repo_root]
+type    = "string"
+label   = "RiichiEnv-PPO repo root (advanced)"
+default = ""
+help    = "Absolute path to the RiichiEnv-PPO checkout. Leave blank when this bot runs unbundled inside the monorepo (auto-detected); required when running from a packaged Akagi.app, since the bundled bot.py can no longer find it by relative position."
+
 [settings.config_path_4p]
 type    = "string"
 label   = "4P config YAML"
